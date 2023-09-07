@@ -4,21 +4,15 @@ import (
 	"encoding/json"
 	"fmt"
 	"net/http"
+
+	"github.com/tonrock01/quiz_go_pokeapi/dataModel"
 )
 
-type Pokemon struct {
-	Name string `json:"name"`
-}
+var pokemonData dataModel.Pokemon
+var berriesData dataModel.Pokemon
 
-type Berries struct {
-	Name string `json:"name"`
-}
-
-var pokemonData Pokemon
-var berriesData Pokemon
-
-func GetDataPokeApi(apiURL string, data interface{}) {
-	response, err := http.Get(apiURL)
+func GetDataPokeApi(apiURL string, endPoint string, dataStruct interface{}) {
+	response, err := http.Get(apiURL + endPoint)
 	if err != nil {
 		fmt.Println("Bad request:", err)
 		return
@@ -31,7 +25,7 @@ func GetDataPokeApi(apiURL string, data interface{}) {
 	}
 
 	decoder := json.NewDecoder(response.Body)
-	if err := decoder.Decode(data); err != nil {
+	if err := decoder.Decode(dataStruct); err != nil {
 		fmt.Println("Can't convert to JSON:", err)
 		return
 	}
@@ -41,9 +35,9 @@ func main() {
 	pokemonURL := "https://pokeapi.co/api/v2/pokemon/"
 	berriesURL := "https://pokeapi.co/api/v2/berry/"
 
-	GetDataPokeApi(pokemonURL+"1", &pokemonData)
-	GetDataPokeApi(berriesURL+"10", &berriesData)
+	GetDataPokeApi(pokemonURL, "30", &pokemonData)
+	GetDataPokeApi(berriesURL, "20", &berriesData)
 
-	fmt.Println("ชื่อ Pokemon:", pokemonData.Name)
-	fmt.Println("ชื่อ Berry:", berriesData.Name)
+	fmt.Println("Pokemon Name:", pokemonData.Name)
+	fmt.Println("Berry Name:", berriesData.Name)
 }
